@@ -3,13 +3,14 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import CampoFormulario from '../componentes/CampoFormulario';
+import SelectorCategoria from '../componentes/SelectorCategoria';
+import BotonConfirmacion from '../componentes/BotonConfirmacion';
 
 const CAMPOS_INICIALES = {
   nombreEquipo: false,
@@ -150,60 +151,20 @@ export default function InscripcionTorneo() {
             placeholder="Solo números"
           />
 
-          <View style={styles.grupoCategoria}>
-            <Text style={styles.etiqueta}>Categoría</Text>
-            <View style={styles.categorias}>
-              {['Sub-16', 'Libre'].map((categoria) => {
-                const seleccionada = formulario.categoria === categoria;
+          <SelectorCategoria
+            valor={formulario.categoria}
+            onChange={(categoria) => actualizarCampo('categoria', categoria)}
+            error={
+              Object.values(interactuados).some(Boolean)
+                ? errores.categoria
+                : undefined
+            }
+          />
 
-                return (
-                  <Pressable
-                    key={categoria}
-                    accessibilityRole="button"
-                    accessibilityState={{ selected: seleccionada }}
-                    onPress={() => actualizarCampo('categoria', categoria)}
-                    style={({ pressed }) => [
-                      styles.botonCategoria,
-                      seleccionada && styles.botonCategoriaSeleccionado,
-                      pressed && styles.botonPresionado,
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.textoCategoria,
-                        seleccionada && styles.textoCategoriaSeleccionado,
-                      ]}
-                    >
-                      {categoria}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-            {Object.values(interactuados).some(Boolean) && errores.categoria ? (
-              <Text style={styles.error}>{errores.categoria}</Text>
-            ) : null}
-          </View>
-
-          <Pressable
-            accessibilityRole="button"
-            disabled={!formularioValido}
+          <BotonConfirmacion
+            deshabilitado={!formularioValido}
             onPress={confirmarInscripcion}
-            style={({ pressed }) => [
-              styles.botonConfirmar,
-              !formularioValido && styles.botonConfirmarDeshabilitado,
-              pressed && formularioValido && styles.botonPresionado,
-            ]}
-          >
-            <Text
-              style={[
-                styles.textoConfirmar,
-                !formularioValido && styles.textoConfirmarDeshabilitado,
-              ]}
-            >
-              Confirmar inscripción
-            </Text>
-          </Pressable>
+          />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -247,63 +208,5 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 560,
     alignSelf: 'center',
-  },
-  grupoCategoria: {
-    marginBottom: 24,
-  },
-  etiqueta: {
-    color: '#f5f5f5',
-    fontSize: 14,
-    fontWeight: '700',
-    marginBottom: 8,
-  },
-  categorias: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  botonCategoria: {
-    flex: 1,
-    alignItems: 'center',
-    borderColor: '#53606d',
-    borderRadius: 6,
-    borderWidth: 1,
-    paddingVertical: 13,
-  },
-  botonCategoriaSeleccionado: {
-    backgroundColor: '#ff4655',
-    borderColor: '#ff4655',
-  },
-  textoCategoria: {
-    color: '#c8d0d8',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  textoCategoriaSeleccionado: {
-    color: '#ffffff',
-  },
-  error: {
-    color: '#ff7580',
-    fontSize: 13,
-    marginTop: 6,
-  },
-  botonConfirmar: {
-    alignItems: 'center',
-    backgroundColor: '#ff4655',
-    borderRadius: 6,
-    paddingVertical: 16,
-  },
-  botonConfirmarDeshabilitado: {
-    backgroundColor: '#34404b',
-  },
-  textoConfirmar: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '800',
-  },
-  textoConfirmarDeshabilitado: {
-    color: '#7f8a95',
-  },
-  botonPresionado: {
-    opacity: 0.8,
   },
 });
